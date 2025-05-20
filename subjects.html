@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .subject-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .subject {
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .subject:hover {
+            background: #dcdde1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>সাবজেক্ট নির্বাচন করুন 📚</h2>
+        </div>
+
+        <div class="section">
+            <h3>বাংলাদেশ কারিকুলাম (এসএসসি লেভেল)</h3>
+            <div class="subject-list" id="subjectList">
+                <!-- সাবজেক্টগুলো স্ক্রিপ্টে যোগ করা হবে -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // বাংলাদেশের এসএসসি কারিকুলামের সাবজেক্ট লিস্ট
+        const subjects = [
+            "বাংলা",
+            "ইংরেজি",
+            "গণিত",
+            "বিজ্ঞান",
+            "সামাজিক বিজ্ঞান",
+            "ইসলাম ও নৈতিক শিক্ষা",
+            "হিন্দু ধর্ম ও নৈতিক শিক্ষা",
+            "বৌদ্ধ ধর্ম ও নৈতিক শিক্ষা",
+            "খ্রিস্ট ধর্ম ও নৈতিক শিক্ষা",
+            "তথ্য ও যোগাযোগ প্রযুক্তি",
+            "কৃষি শিক্ষা",
+            "গার্হস্থ্য বিজ্ঞান",
+            "শারীরিক শিক্ষা ও স্বাস্থ্য",
+            "চারু ও কারুকলা",
+            "কর্ম ও জীবনমুখী শিক্ষা",
+            "উচ্চতর গণিত",
+            "রসায়ন",
+            "পদার্থবিজ্ঞান",
+            "জীববিজ্ঞান",
+            "ভূগোল ও পরিবেশ",
+            "ইতিহাস ও বিশ্বসভ্যতা",
+            "অর্থনীতি",
+            "হিসাববিজ্ঞান",
+            "ব্যবসায় শিক্ষা",
+            "ফিন্যান্স ও ব্যাংকিং"
+        ];
+
+        // সাবজেক্ট লিস্ট দেখানো
+        function showSubjects() {
+            const subjectList = document.getElementById('subjectList');
+            subjects.forEach(subject => {
+                const div = document.createElement('div');
+                div.className = 'subject';
+                div.textContent = subject;
+                div.onclick = () => {
+                    localStorage.setItem('currentSubject', subject);
+                    window.location.href = 'chapter.html';
+                };
+                subjectList.appendChild(div);
+            });
+        }
+
+        // পেজ লোড হলে সাবজেক্ট দেখানো
+        window.onload = showSubjects;
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam 2 - Answer Submission</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .question p {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .question textarea {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>পরীক্ষা ২ - উত্তর জমা 📋</h2>
+        </div>
+
+        <div class="section">
+            <h3>উত্তর দিন</h3>
+            <div id="questionList"></div>
+            <button onclick="submitAnswers()">উত্তর জমা দিন 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = JSON.parse(localStorage.getItem('examQuestions')) || { q1: "", q2: "", q3: "" };
+        const questionList = document.getElementById('questionList');
+
+        if (questions.q1 || questions.q2 || questions.q3) {
+            if (questions.q1) {
+                questionList.innerHTML += `<div class="question"><p>প্রশ্ন ১: ${questions.q1}</p><textarea id="answer1" placeholder="উত্তর লিখুন"></textarea></div>`;
+            }
+            if (questions.q2) {
+                questionList.innerHTML += `<div class="question"><p>প্রশ্ন ২: ${questions.q2}</p><textarea id="answer2" placeholder="উত্তর লিখুন"></textarea></div>`;
+            }
+            if (questions.q3) {
+                questionList.innerHTML += `<div class="question"><p>প্রশ্ন ৩: ${questions.q3}</p><textarea id="answer3" placeholder="উত্তর লিখুন"></textarea></div>`;
+            }
+        } else {
+            questionList.innerHTML = "<p>কোনো প্রশ্ন পাওয়া যায়নি! exam.html থেকে প্রশ্ন সেট করুন।</p>";
+        }
+
+        function submitAnswers() {
+            const answers = {
+                a1: document.getElementById('answer1') ? document.getElementById('answer1').value : "",
+                a2: document.getElementById('answer2') ? document.getElementById('answer2').value : "",
+                a3: document.getElementById('answer3') ? document.getElementById('answer3').value : ""
+            };
+            localStorage.setItem('examAnswers', JSON.stringify(answers));
+            alert("উত্তর জমা দেওয়া হয়েছে! রেজাল্ট দেখতে exam3.html এ যান।");
+            window.location.href = 'exam3.html';
+        }
+    </script>
+</body>
+</html>

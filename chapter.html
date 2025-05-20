@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header a, .header button {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .header a:hover, .header button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .chapter-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .chapter-label {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 100px;
+        }
+
+        .chapter-option {
+            padding: 8px 15px;
+            background: #3498db;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chapter-option:hover {
+            background: #2980b9;
+        }
+
+        .chapter-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chapter-input input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 200px;
+        }
+
+        .chapter-input button, .edit-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chapter-input button {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+        }
+
+        .chapter-input button:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .saved-chapter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+        }
+
+        .edit-btn {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 id="subjectTitle">বিষয় 📚</h2>
+            <div>
+                <button onclick="goToIndex()">Go 🚀</button>
+                <a href="subjects.html">ব্যাক 🔙</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>অধ্যায়গুলো ম্যানেজ করুন 📖</h3>
+            <div id="chapterSection">
+                <!-- ১২টি অধ্যায় এখানে যোগ হবে -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // সাবজেক্ট নাম দেখানো
+        const subject = localStorage.getItem('currentSubject') || "অজানা";
+        document.getElementById('subjectTitle').textContent = `${subject} 📚`;
+
+        // ১২টি অধ্যায় দেখানো
+        function showChapters() {
+            const chapterSection = document.getElementById('chapterSection');
+            chapterSection.innerHTML = '';
+
+            const savedChapters = JSON.parse(localStorage.getItem(`chapters_${subject}`)) || {};
+
+            for (let i = 1; i <= 12; i++) {
+                const chapterRow = document.createElement('div');
+                chapterRow.className = 'chapter-row';
+
+                const label = document.createElement('span');
+                label.className = 'chapter-label';
+                label.textContent = `অধ্যায় ${i}`;
+                chapterRow.appendChild(label);
+
+                if (savedChapters[i]) {
+                    const savedDiv = document.createElement('div');
+                    savedDiv.className = 'saved-chapter';
+                    savedDiv.textContent = savedChapters[i];
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-btn';
+                    editBtn.textContent = 'পরিবর্তন';
+                    editBtn.onclick = () => editChapter(i, savedChapters[i]);
+                    savedDiv.appendChild(editBtn);
+                    chapterRow.appendChild(savedDiv);
+                } else {
+                    const option = document.createElement('div');
+                    option.className = 'chapter-option';
+                    option.textContent = 'নাম যোগ করুন';
+                    option.onclick = () => showChapterInput(i, chapterRow);
+                    chapterRow.appendChild(option);
+                }
+
+                chapterSection.appendChild(chapterRow);
+            }
+        }
+
+        // অধ্যায় ইনপুট দেখানো
+        let currentChapterIndex = null;
+        let currentInputRow = null;
+        function showChapterInput(index, row) {
+            // পুরানো ইনপুট ফিল্ড (যদি থাকে) মুছে ফেলা
+            if (currentInputRow) {
+                currentInputRow.remove();
+            }
+
+            currentChapterIndex = index;
+            const inputDiv = document.createElement('div');
+            inputDiv.className = 'chapter-input';
+            inputDiv.innerHTML = `
+                <input type="text" id="chapterNameInput" placeholder="অধ্যায়ের নাম লিখুন">
+                <button onclick="saveChapter()">সেভ করুন 💾</button>
+            `;
+            row.appendChild(inputDiv);
+            currentInputRow = inputDiv;
+            document.getElementById('chapterNameInput').focus();
+        }
+
+        // অধ্যায় সেভ করা
+        function saveChapter() {
+            const chapterName = document.getElementById('chapterNameInput').value;
+            if (!chapterName) {
+                alert("দয়া করে অধ্যায়ের নাম লিখুন!");
+                return;
+            }
+
+            const savedChapters = JSON.parse(localStorage.getItem(`chapters_${subject}`)) || {};
+            savedChapters[currentChapterIndex] = chapterName;
+            localStorage.setItem(`chapters_${subject}`, JSON.stringify(savedChapters));
+
+            currentInputRow = null;
+            showChapters(); // রিলোড করা
+        }
+
+        // অধ্যায় এডিট করা
+        function editChapter(index, currentName) {
+            const row = document.querySelector(`#chapterSection .chapter-row:nth-child(${index})`);
+            showChapterInput(index, row);
+            document.getElementById('chapterNameInput').value = currentName;
+        }
+
+        // Go বাটনে ক্লিক করলে index.html এ রিডিরেক্ট করা
+        function goToIndex() {
+            const savedChapters = JSON.parse(localStorage.getItem(`chapters_${subject}`)) || {};
+            const selectedChapter = Object.values(savedChapters)[0] || "অজানা"; // প্রথম অধ্যায় বা ডিফল্ট
+            localStorage.setItem('currentChapter', selectedChapter);
+            window.location.href = 'index.html';
+        }
+
+        // পেজ লোড হলে অধ্যায় দেখানো
+        window.onload = showChapters;
+    </script>
+</body>
+</html>

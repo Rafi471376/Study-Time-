@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Session</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .tree-animation {
+            font-size: 60px;
+            margin-bottom: 20px;
+            transition: font-size 1s linear;
+        }
+
+        .timer-display {
+            font-size: 36px;
+            margin: 20px 0;
+            color: #2ecc71;
+        }
+
+        .subject-section input, .music-section button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 5px 0;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .subject-section input:hover, .music-section button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .subject-section button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .subject-section button:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            transform: scale(1.05);
+        }
+
+        .music-section button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: #fff;
+            margin: 5px;
+        }
+
+        .music-section button:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: scale(1.05);
+        }
+
+        .stop-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .stop-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>ফোকাস সেশন ⏳</h2>
+        </div>
+
+        <div class="tree-animation" id="treeAnimation">🌱</div>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+
+        <div class="subject-section" id="subjectSection">
+            <input type="text" id="subjectInput" placeholder="বিষয় লিখুন (যেমন: গণিত)">
+            <button onclick="saveSubject()">সেভ করুন 💾</button>
+        </div>
+
+        <div class="music-section">
+            <input type="file" id="musicInput" accept="audio/*">
+            <button onclick="playMusic()">বাজানো শুরু করুন 🎵</button>
+            <button onclick="stopMusic()">বাজানো বন্ধ করুন ⏹️</button>
+        </div>
+
+        <button class="stop-btn" id="stopBtn" onclick="stopFocus()">থামুন 🚫</button>
+        <a href="index.html" class="back-btn">ফিরে যান 🔙</a>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft = 0;
+        let totalTime = 0;
+        const timerDisplay = document.getElementById('timerDisplay');
+        const treeAnimation = document.getElementById('treeAnimation');
+        const stopBtn = document.getElementById('stopBtn');
+        const subjectSection = document.getElementById('subjectSection');
+        let audio = new Audio();
+
+        const subject = localStorage.getItem('currentSubject') || "অজানা";
+        const chapter = localStorage.getItem('currentChapter') || "অজানা";
+        let data = JSON.parse(localStorage.getItem(`studyCompetition_${subject}_${chapter}`)) || {
+            players: { "You": { points: 0, tasks: [], dailyTime: 0, dailyPoints: 0 } },
+            lastUpdated: new Date().toISOString().split('T')[0]
+        };
+
+        // ডাটা লোড
+        timeLeft = totalTime = parseInt(localStorage.getItem('focusDuration') || 600);
+        const treeType = localStorage.getItem('focusTreeType') || '🌱';
+        treeAnimation.textContent = treeType;
+
+        function startTimer() {
+            updateTimerDisplay();
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                updateTreeAnimation();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    completeFocus();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTreeAnimation() {
+            const progress = 1 - (timeLeft / totalTime);
+            treeAnimation.style.fontSize = `${60 + progress * 100}px`; // ধীরে ধীরে বড় হবে
+        }
+
+        function stopFocus() {
+            clearInterval(timer);
+            stopMusic();
+            alert("⏳ ফোকাস সেশন বন্ধ করা হয়েছে। কোনো পয়েন্ট যোগ হয়নি।");
+            window.location.href = 'index.html';
+        }
+
+        function completeFocus() {
+            stopBtn.style.display = 'none';
+            const duration = totalTime;
+            let points = 0;
+            if (duration === 600) points = 5;
+            else if (duration === 1500) points = 10;
+            else if (duration === 1200) points = 30;
+            else if (duration === 2700) points = 35;
+            else if (duration === 3600) points = 40;
+            else if (duration === 5100) points = 50;
+            else if (duration === 7200) points = 60;
+
+            const today = new Date().toISOString().split('T')[0];
+            if (data.lastUpdated !== today) {
+                data.players["You"].dailyTime = 0;
+                data.players["You"].dailyPoints = 0;
+                data.lastUpdated = today;
+            }
+
+            data.players["You"].dailyTime += (totalTime / 60);
+            data.players["You"].dailyPoints += points;
+            data.players["You"].points += points;
+            const savedSubject = document.getElementById('subjectInput').value || "অজানা";
+            data.players["You"].tasks.push(`Focus: ${duration / 60} minutes on ${savedSubject} - ${points} points`);
+            localStorage.setItem(`studyCompetition_${subject}_${chapter}`, JSON.stringify(data));
+
+            stopMusic();
+            alert(`🎉 অভিনন্দন! আপনি ${duration / 60} মিনিট ফোকাস করে ${points} পয়েন্ট পেয়েছেন! দৈনিক পয়েন্ট: ${data.players["You"].dailyPoints}/200`);
+            window.location.href = 'index.html';
+        }
+
+        // মিউজিক কন্ট্রোল
+        function playMusic() {
+            const musicInput = document.getElementById('musicInput');
+            if (musicInput.files.length > 0) {
+                const file = musicInput.files[0];
+                audio.src = URL.createObjectURL(file);
+                audio.play();
+            } else {
+                alert("দয়া করে একটি মিউজিক ফাইল সিলেক্ট করুন!");
+            }
+        }
+
+        function stopMusic() {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
+        // বিষয় সেভ করা
+        function saveSubject() {
+            const subjectInput = document.getElementById('subjectInput').value;
+            if (subjectInput) {
+                alert(`✅ বিষয় "${subjectInput}" সেভ করা হয়েছে!`);
+            }
+        }
+
+        // পেজ লোড হলে টাইমার শুরু
+        window.onload = () => {
+            startTimer();
+            subjectSection.style.display = 'block';
+        };
+    </script>
+</body>
+</html>

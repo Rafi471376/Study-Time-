@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer - Focus Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .timer-section {
+            margin: 20px 0;
+        }
+
+        .timer-section select, .tree-section select {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .timer-section select:hover, .tree-section select:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>ফোকাস মোড ⏳</h2>
+        </div>
+
+        <div class="timer-section">
+            <select id="timerDuration">
+                <option value="600">১০ মিনিট (৫ পয়েন্ট)</option>
+                <option value="1500">২৫ মিনিট (১০ পয়েন্ট)</option>
+                <option value="1200">২০ মিনিট (৩০ পয়েন্ট)</option>
+                <option value="2700">৪৫ মিনিট (৩৫ পয়েন্ট)</option>
+                <option value="3600">৬০ মিনিট (৪০ পয়েন্ট)</option>
+                <option value="5100">৮৫ মিনিট (৫০ পয়েন্ট)</option>
+                <option value="7200">২ ঘণ্টা (৬০ পয়েন্ট)</option>
+            </select>
+            <div class="tree-section">
+                <select id="treeType">
+                    <option value="🌱">ছোট চারা 🌱</option>
+                    <option value="🌿">মাঝারি গাছ 🌿</option>
+                    <option value="🌳">বড় গাছ 🌳</option>
+                    <option value="🌲">পাইন গাছ 🌲</option>
+                    <option value="🍀">ক্লোভার 🍀</option>
+                    <option value="🪴">পাত্রের গাছ 🪴</option>
+                </select>
+            </div>
+            <button class="start-btn" id="startBtn" onclick="startFocus()">শুরু করুন 🌱</button>
+        </div>
+
+        <a href="index.html" class="back-btn">ফিরে যান 🔙</a>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+
+        const subject = localStorage.getItem('currentSubject') || "অজানা";
+        const chapter = localStorage.getItem('currentChapter') || "অজানা";
+        let data = JSON.parse(localStorage.getItem(`studyCompetition_${subject}_${chapter}`)) || {
+            players: { "You": { points: 0, tasks: [], dailyTime: 0, dailyPoints: 0 } },
+            lastUpdated: new Date().toISOString().split('T')[0]
+        };
+
+        function startFocus() {
+            const duration = document.getElementById('timerDuration').value;
+            const treeType = document.getElementById('treeType').value;
+            localStorage.setItem('focusDuration', duration);
+            localStorage.setItem('focusTreeType', treeType);
+            window.location.href = 'focus.html';
+        }
+    </script>
+</body>
+</html>

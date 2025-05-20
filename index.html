@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Competition Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4ff, #e0e7ff);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header .user-info h2 {
+            font-size: 24px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .menu-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            right: 20px;
+            top: 60px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .menu a:hover {
+            color: #3498db;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .task-submit {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .task-submit input, .task-submit select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .task-submit input:focus, .task-submit select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+
+        .task-submit button {
+            padding: 12px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .task-submit button:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            transform: scale(1.02);
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+        }
+
+        .leaderboard ol {
+            list-style: none;
+        }
+
+        .leaderboard li {
+            padding: 12px;
+            background: #ecf0f1;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .leaderboard li:hover {
+            background: #dcdde1;
+            transform: translateX(5px);
+        }
+
+        .leaderboard li.you {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .motivation, .progress-bar {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .motivation {
+            background: #d4edda;
+            color: #155724;
+            font-style: italic;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .progress-bar {
+            background: #fff;
+            border: 2px solid #2ecc71;
+        }
+
+        .progress {
+            height: 20px;
+            background: #2ecc71;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        .schedule-section, .exam-section, .goal-section, .achievement-section {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-section input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .schedule-section button, .exam-section button, .goal-section button {
+            padding: 12px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .schedule-section button:hover, .exam-section button:hover, .goal-section button:hover {
+            background: #c0392b;
+            transform: scale(1.02);
+        }
+
+        .schedule-section ul, .goal-section ul, .achievement-section ul {
+            list-style: none;
+        }
+
+        .schedule-section li, .goal-section li, .achievement-section li {
+            padding: 10px;
+            background: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .achievement-section li {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- হেডার -->
+        <div class="header">
+            <div class="user-info">
+                <h2>Rafi 🕴️</h2>
+                <span id="subjectChapter"></span>
+            </div>
+            <div class="menu-btn" onclick="toggleMenu()">⋮</div>
+            <div class="menu" id="menu">
+                <a href="#" onclick="openSubjects()">সাবজেক্ট নির্বাচন 📚</a>
+                <a href="focus.html">টাইমার ⏳</a>
+                <a href="#" onclick="showReportCard(event)">রিপোর্ট কার্ড 📊</a>
+            </div>
+        </div>
+
+        <!-- টাস্ক সাবমিশন -->
+        <div class="section">
+            <h3>Submit Your Task 📝</h3>
+            <div class="task-submit">
+                <input type="text" id="taskInput" placeholder="Enter your task (e.g., Math Chapter 1 Done)">
+                <select id="taskStage">
+                    <option value="15">বীজ বপন (১৫ পয়েন্ট)</option>
+                    <option value="20">অঙ্কুর গজানো (২০ পয়েন্ট)</option>
+                    <option value="25">গাছের কাণ্ড গড়ে ওঠা (২৫ পয়েন্ট)</option>
+                    <option value="25">পাতা ও ফুল ফোটা (২৫ পয়েন্ট)</option>
+                    <option value="10">ফল পাওয়া (১০ পয়েন্ট)</option>
+                    <option value="5">বনের শুরু (৫ পয়েন্ট)</option>
+                </select>
+                <label><input type="checkbox" id="bonusChallenge"> Bonus Challenge (+5 points) 🌟</label>
+                <button onclick="submitTask()">Submit Task ✅</button>
+            </div>
+
+            <div class="leaderboard">
+                <h3>🏆 Leaderboard</h3>
+                <ol id="leaderboardList"></ol>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: 0%;"></div>
+                <p>প্রগতি: <span id="progressText">0%</span></p>
+            </div>
+
+            <div id="motivationMessage" class="motivation"></div>
+        </div>
+
+        <!-- পড়ার সময়সূচী -->
+        <div class="section schedule-section">
+            <h3>পড়ার সময়সূচী 📅</h3>
+            <input type="text" id="scheduleInput" placeholder="যেমন: গণিত - ৬-৭ PM">
+            <button onclick="addSchedule()">সময় যোগ কর 🔧</button>
+            <ul id="scheduleList"></ul>
+        </div>
+
+        <!-- ডেইলি গোল -->
+        <div class="section goal-section">
+            <h3>ডেইলি গোল 🎯</h3>
+            <input type="text" id="goalInput" placeholder="আজকের গোল লিখুন (যেমন: ২ ঘণ্টা পড়া)">
+            <button onclick="addGoal()">গোল যোগ কর 🚀</button>
+            <ul id="goalList"></ul>
+        </div>
+
+        <!-- অ্যাচিভমেন্ট -->
+        <div class="section achievement-section">
+            <h3>অ্যাচিভমেন্ট 🏅</h3>
+            <ul id="achievementList"></ul>
+        </div>
+
+        <!-- পরীক্ষা সেকশন -->
+        <div class="section exam-section">
+            <h3>পরীক্ষা প্রস্তুতি 📝</h3>
+            <button onclick="openExam('exam.html')">পরীক্ষা ১ (প্রশ্ন) 🚀</button>
+            <button onclick="openExam('exam2.html')">পরীক্ষা ২ (উত্তর জমা) 📋</button>
+            <button onclick="openExam('exam3.html')">পরীক্ষা ৩ (রেজাল্ট) 🎯</button>
+        </div>
+    </div>
+
+    <script>
+        // সাবজেক্ট এবং অধ্যায় দেখানো
+        const subject = localStorage.getItem('currentSubject') || "অজানা";
+        const chapter = localStorage.getItem('currentChapter') || "অজানা";
+        document.getElementById('subjectChapter').textContent = `${subject} - ${chapter}`;
+
+        // ডাটা লোড করা
+        let data = JSON.parse(localStorage.getItem(`studyCompetition_${subject}_${chapter}`)) || {
+            players: {
+                "You": { points: 0, tasks: [] },
+                "Player1": { points: 0, tasks: [] },
+                "Player2": { points: 0, tasks: [] },
+                "Player3": { points: 0, tasks: [] },
+                "Player4": { points: 0, tasks: [] },
+                "Player5": { points: 0, tasks: [] },
+                "Player6": { points: 0, tasks: [] },
+                "Player7": { points: 0, tasks: [] }
+            },
+            lastUpdated: new Date().toISOString().split('T')[0]
+        };
+
+        let schedules = JSON.parse(localStorage.getItem(`schedules_${subject}_${chapter}`)) || [];
+        let goals = JSON.parse(localStorage.getItem(`goals_${subject}_${chapter}`)) || [];
+        let achievements = JSON.parse(localStorage.getItem(`achievements_${subject}_${chapter}`)) || [];
+        let dailyProgress = JSON.parse(localStorage.getItem('dailyProgress')) || {
+            totalTime: 0,
+            totalPoints: 0,
+            dailyRecords: {}
+        };
+
+        // কম্পিউটার প্রতিযোগীদের পয়েন্ট আপডেট
+        function updateComputerPlayers() {
+            const today = new Date().toISOString().split('T')[0];
+            if (data.lastUpdated !== today) {
+                for (let player in data.players) {
+                    if (player !== "You") {
+                        const pointsEarned = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+                        data.players[player].points += pointsEarned;
+                        data.players[player].tasks.push(`Day ${today}: Earned ${pointsEarned} points`);
+                    }
+                }
+                data.lastUpdated = today;
+                localStorage.setItem(`studyCompetition_${subject}_${chapter}`, JSON.stringify(data));
+            }
+        }
+
+        // লিডারবোর্ড ও প্রগতি দেখানো
+        function showLeaderboard() {
+            updateComputerPlayers();
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+
+            const sortedPlayers = Object.entries(data.players).sort((a, b) => b[1].points - a[1].points);
+            let yourRank = null;
+            let yourPoints = 0;
+            const maxPoints = 500;
+
+            sortedPlayers.forEach(([player, info], index) => {
+                const li = document.createElement('li');
+                li.textContent = `Rank ${index + 1}: ${player} - ${info.points} পয়েন্ট`;
+                if (player === "You") {
+                    li.classList.add('you');
+                    yourRank = index + 1;
+                    yourPoints = info.points;
+                }
+                leaderboardList.appendChild(li);
+            });
+
+            // প্রগতি বার
+            const progress = (yourPoints / maxPoints) * 100;
+            document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+            document.getElementById('progressText').textContent = `${Math.min(Math.round(progress), 100)}%`;
+
+            // মোটিভেশনাল মেসেজ
+            const motivationMessage = document.getElementById('motivationMessage');
+            const motivations = [
+                "🌟 আজকের চেষ্টা অসাধারণ! এভাবে এগিয়ে যাও! 🚀",
+                "💪 তুমি পারবে! একটু ফোকাস করো, সাফল্য নিশ্চিত! 🌱",
+                "🎉 তোমার উৎসাহ আমাদের কাছে অনুপ্রেরণা! 🌟"
+            ];
+            motivationMessage.textContent = motivations[Math.floor(Math.random() * motivations.length)];
+
+            // অ্যাচিভমেন্ট চেক
+            checkAchievements(yourPoints);
+        }
+
+        // টাস্ক সাবমিট
+        function submitTask() {
+            const taskInput = document.getElementById('taskInput').value;
+            const taskStage = parseInt(document.getElementById('taskStage').value);
+            const bonusChallenge = document.getElementById('bonusChallenge').checked;
+
+            if (!taskInput) {
+                alert("দয়া করে টাস্ক লিখুন!");
+                return;
+            }
+
+            const bonusPoints = bonusChallenge ? 5 : 0;
+            const totalPoints = taskStage + bonusPoints;
+
+            data.players["You"].points += totalPoints;
+            data.players["You"].tasks.push(`Day ${new Date().toISOString().split('T')[0]}: ${taskInput} - ${totalPoints} points`);
+
+            localStorage.setItem(`studyCompetition_${subject}_${chapter}`, JSON.stringify(data));
+            document.getElementById('taskInput').value = '';
+            document.getElementById('bonusChallenge').checked = false;
+
+            alert(`✅ টাস্ক সাবমিট সম্পন্ন! আপনি ${totalPoints} পয়েন্ট পেয়েছেন। আপনার মোট পয়েন্ট: ${data.players["You"].points}`);
+            showLeaderboard();
+        }
+
+        // পড়ার সময়সূচী
+        function addSchedule() {
+            const scheduleInput = document.getElementById('scheduleInput').value;
+            if (scheduleInput) {
+                schedules.push({ task: scheduleInput, date: new Date().toISOString().split('T')[0] });
+                localStorage.setItem(`schedules_${subject}_${chapter}`, JSON.stringify(schedules));
+                document.getElementById('scheduleInput').value = '';
+                showSchedules();
+            }
+        }
+
+        function showSchedules() {
+            const scheduleList = document.getElementById('scheduleList');
+            scheduleList.innerHTML = '';
+            schedules.forEach((s, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${s.task} (তারিখ: ${s.date})`;
+                scheduleList.appendChild(li);
+            });
+        }
+
+        // ডেইলি গোল
+        function addGoal() {
+            const goalInput = document.getElementById('goalInput').value;
+            if (goalInput) {
+                goals.push({ task: goalInput, date: new Date().toISOString().split('T')[0] });
+                localStorage.setItem(`goals_${subject}_${chapter}`, JSON.stringify(goals));
+                document.getElementById('goalInput').value = '';
+                showGoals();
+            }
+        }
+
+        function showGoals() {
+            const goalList = document.getElementById('goalList');
+            goalList.innerHTML = '';
+            goals.forEach((g, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${g.task} (তারিখ: ${g.date})`;
+                goalList.appendChild(li);
+            });
+        }
+
+        // অ্যাচিভমেন্ট
+        function checkAchievements(points) {
+            if (points >= 100 && !achievements.includes("১০০ পয়েন্ট অর্জন! 🏅")) {
+                achievements.push("১০০ পয়েন্ট অর্জন! 🏅");
+            }
+            if (points >= 300 && !achievements.includes("৩০০ পয়েন্ট অর্জন! 🏆")) {
+                achievements.push("৩০০ পয়েন্ট অর্জন! 🏆");
+            }
+            if (schedules.length >= 5 && !achievements.includes("৫টি সময়সূচী যোগ! 📅")) {
+                achievements.push("৫টি সময়সূচী যোগ! 📅");
+            }
+            localStorage.setItem(`achievements_${subject}_${chapter}`, JSON.stringify(achievements));
+            showAchievements();
+        }
+
+        function showAchievements() {
+            const achievementList = document.getElementById('achievementList');
+            achievementList.innerHTML = '';
+            achievements.forEach((a, index) => {
+                const li = document.createElement('li');
+                li.textContent = a;
+                achievementList.appendChild(li);
+            });
+        }
+
+        // পরীক্ষা পেজে যাওয়া
+        function openExam(file) {
+            localStorage.setItem('currentExamPage', file);
+            window.location.href = file;
+        }
+
+        // মেনু টগল
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // সাবজেক্ট নির্বাচন
+        function openSubjects() {
+            window.location.href = 'subjects.html';
+        }
+
+        // রিপোর্ট কার্ড
+        function showReportCard(event) {
+            event.preventDefault();
+            window.location.href = 'report.html';
+        }
+
+        // পেজ লোড হলে সব দেখানো
+        window.onload = () => {
+            showLeaderboard();
+            showSchedules();
+            showGoals();
+            showAchievements();
+        };
+    </script>
+</body>
+</html>

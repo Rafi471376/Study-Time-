@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam 3 - Result</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+        }
+
+        .result-item p {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>পরীক্ষা ৩ - রেজাল্ট 🎯</h2>
+        </div>
+
+        <div class="section">
+            <h3>আপনার রেজাল্ট</h3>
+            <div id="resultSection"></div>
+            <button onclick="backToIndex()">ফিরে যান 🔙</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = JSON.parse(localStorage.getItem('examQuestions')) || { q1: "", q2: "", q3: "" };
+        const answers = JSON.parse(localStorage.getItem('examAnswers')) || { a1: "", a2: "", a3: "" };
+        const resultSection = document.getElementById('resultSection');
+
+        let score = 0;
+        const totalQuestions = Object.keys(questions).length;
+
+        if (totalQuestions > 0) {
+            resultSection.innerHTML = "<h4>প্রশ্ন ও উত্তর:</h4>";
+            if (questions.q1) {
+                resultSection.innerHTML += `<div class="result-item"><p>প্রশ্ন ১: ${questions.q1}</p><p>আপনার উত্তর: ${answers.a1 || 'না দিয়েছেন'}</p></div>`;
+                if (answers.a1 && answers.a1.toLowerCase().includes("correct")) score += 10; // সরল চেক
+            }
+            if (questions.q2) {
+                resultSection.innerHTML += `<div class="result-item"><p>প্রশ্ন ২: ${questions.q2}</p><p>আপনার উত্তর: ${answers.a2 || 'না দিয়েছেন'}</p></div>`;
+                if (answers.a2 && answers.a2.toLowerCase().includes("correct")) score += 10;
+            }
+            if (questions.q3) {
+                resultSection.innerHTML += `<div class="result-item"><p>প্রশ্ন ৩: ${questions.q3}</p><p>আপনার উত্তর: ${answers.a3 || 'না দিয়েছেন'}</p></div>`;
+                if (answers.a3 && answers.a3.toLowerCase().includes("correct")) score += 10;
+            }
+            resultSection.innerHTML += `<p><strong>মোট স্কোর: ${score} / ${totalQuestions * 10}</strong></p>`;
+        } else {
+            resultSection.innerHTML = "<p>কোনো প্রশ্ন পাওয়া যায়নি! exam.html থেকে প্রশ্ন সেট করুন।</p>";
+        }
+
+        function backToIndex() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
